@@ -1,0 +1,11 @@
+{
+  "name": "eslint-plugin-baby-sleep",
+  "version": "1.2.0",
+  "description": "ESLint rule for restricting imports to path aliases",
+  "main": "index.js",
+  "scripts": {
+    "build": "babel lib --out-dir ./ "
+  },
+  "author": "Sergiu Miclea",
+  "license": "MIT"
+}
