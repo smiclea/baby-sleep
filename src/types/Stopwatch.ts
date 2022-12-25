@@ -1,8 +1,8 @@
 export type StopWatchItemType = "sleep" | "awake";
 export type StopwatchItem = {
   type: StopWatchItemType;
-  from: Date;
-  to?: Date;
+  from: string;
+  to?: string;
 };
 export type StopwatchCycle = {
   items: StopwatchItem[];

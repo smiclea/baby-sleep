@@ -6,6 +6,7 @@ import NavigationVue from "@/components/modules/NavigationVue.vue";
 import { useStopwatchStore } from "@/stores/stopwatchStore";
 
 const stopwatchStore = useStopwatchStore();
+stopwatchStore.loadCycles();
 </script>
 
 <template>

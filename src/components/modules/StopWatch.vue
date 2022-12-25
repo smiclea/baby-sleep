@@ -4,7 +4,7 @@ import { fitFontSizeToWidth } from "@/utils/domUtils";
 import { onMounted, ref, computed, watch } from "vue";
 
 const props = defineProps<{
-  from: Date | null;
+  from: string | null;
   type: "sleep" | "awake";
 }>();
 const emit = defineEmits<{
@@ -20,7 +20,7 @@ const updateTimeLabel = () => {
     currentTimeLabel.value = "";
     return;
   }
-  const currentTime = new Date().getTime() - props.from.getTime();
+  const currentTime = new Date().getTime() - new Date(props.from).getTime();
   const hours = Math.floor(currentTime / 3600000);
   const minutes = Math.floor((currentTime % 3600000) / 60000);
   const seconds = Math.floor(((currentTime % 3600000) % 60000) / 1000);

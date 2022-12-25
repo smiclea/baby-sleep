@@ -16,10 +16,10 @@ watch(
       headerLabel.value = "";
       return;
     }
-    const firstDate = DateTime.fromJSDate(
+    const firstDate = DateTime.fromISO(
       currentLog.value[currentLog.value.length - 1].from
     );
-    const lastDate = DateTime.fromJSDate(new Date());
+    const lastDate = DateTime.now();
     if (firstDate.hasSame(lastDate, "day")) {
       headerLabel.value = firstDate.toFormat("LLLL dd");
       return;
@@ -30,8 +30,8 @@ watch(
   },
   { immediate: true, deep: true }
 );
-const getDifferenceLabel = (from: Date, to: Date) => {
-  const diff = DateTime.fromJSDate(to).diff(DateTime.fromJSDate(from), [
+const getDifferenceLabel = (from: string, to: string) => {
+  const diff = DateTime.fromISO(to).diff(DateTime.fromISO(from), [
     "hours",
     "minutes",
     "seconds",
@@ -47,77 +47,26 @@ const getDifferenceLabel = (from: Date, to: Date) => {
   }
   return `${hours}h${minutes}m${seconds}s`;
 };
+const getTime = (date: string) => {
+  const time = DateTime.fromISO(date);
+  return `${time.toFormat("HH")}:${time.toFormat("mm")}`;
+};
 </script>
 <template>
   <div class="current-log-wrapper">
     <div class="header">{{ headerLabel }}</div>
     <div class="items">
-      <div
-        class="item"
-        v-for="(item, index) in currentLog"
-        :key="item.from.getTime()"
-      >
+      <div class="item" v-for="(item, index) in currentLog" :key="item.from">
         <div class="item-label" :class="{ 'slept-for': item.type === 'sleep' }">
-          {{ item.type === "sleep" ? "Slept" : "Woke" }}
+          {{ item.type === "sleep" ? "Slept" : "Awake" }}
         </div>
         <div class="item-value">
           for
           {{ getDifferenceLabel(item.from, log![index].from) }}
-          (02:34 - 3:45)
+          ({{ getTime(item.from) }} - {{ getTime(log![index].from) }})
         </div>
       </div>
     </div>
-    <!-- <div class="header">25 December - 26 December</div>
-    <div class="items">
-      <div class="item">
-        <div class="item-label slept-for">Slept</div>
-        <div class="item-value">for 1h24m (02:34 - 3:45)</div>
-      </div>
-      <div class="item">
-        <div class="item-label woke-for">Woke</div>
-        <div class="item-value">for 1h24m (02:34 - 3:45)</div>
-      </div>
-      <div class="item">
-        <div class="item-label slept-for">Slept</div>
-        <div class="item-value">for 1h24m (02:34 - 3:45)</div>
-      </div>
-      <div class="item">
-        <div class="item-label woke-for">Woke</div>
-        <div class="item-value">for 1h24m (02:34 - 3:45)</div>
-      </div>
-      <div class="item">
-        <div class="item-label slept-for">Slept</div>
-        <div class="item-value">for 1h24m (02:34 - 3:45)</div>
-      </div>
-      <div class="item">
-        <div class="item-label woke-for">Woke</div>
-        <div class="item-value">for 1h24m (02:34 - 3:45)</div>
-      </div>
-      <div class="item">
-        <div class="item-label slept-for">Slept</div>
-        <div class="item-value">for 1h24m (02:34 - 3:45)</div>
-      </div>
-      <div class="item">
-        <div class="item-label woke-for">Woke</div>
-        <div class="item-value">for 1h24m (02:34 - 3:45)</div>
-      </div>
-      <div class="item">
-        <div class="item-label slept-for">Slept</div>
-        <div class="item-value">for 1h24m (02:34 - 3:45)</div>
-      </div>
-      <div class="item">
-        <div class="item-label woke-for">Woke</div>
-        <div class="item-value">for 1h24m (02:34 - 3:45)</div>
-      </div>
-      <div class="item">
-        <div class="item-label slept-for">Slept</div>
-        <div class="item-value">for 1h24m (02:34 - 3:45)</div>
-      </div>
-      <div class="item">
-        <div class="item-label woke-for">Woke</div>
-        <div class="item-value">for 1h24m (02:34 - 3:45)</div>
-      </div>
-    </div> -->
   </div>
 </template>
 <style scoped>
