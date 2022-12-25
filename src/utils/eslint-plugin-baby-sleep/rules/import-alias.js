@@ -1,54 +1,59 @@
-'use strict';
+"use strict";
 
 Object.defineProperty(exports, "__esModule", {
-  value: true
+  value: true,
 });
 exports.meta = undefined;
 exports.create = create;
 
-var _path = require('path');
+const _path = require("path");
 
-var _path2 = _interopRequireDefault(_path);
+const _path2 = _interopRequireDefault(_path);
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+function _interopRequireDefault(obj) {
+  return obj && obj.__esModule ? obj : { default: obj };
+}
 
-var meta = exports.meta = {
+const meta = (exports.meta = {
   docs: {
-    description: 'Restrict imports to path aliases or relative imports limited by a depth',
-    category: 'Possible Errors',
-    recommended: true
+    description:
+      "Restrict imports to path aliases or relative imports limited by a depth",
+    category: "Possible Errors",
+    recommended: true,
   },
-  fixable: 'code',
-  schema: [{
-    type: 'object',
-    properties: {
-      rootDir: { type: 'string' },
-      relativeDepth: { type: 'number' },
-      aliases: {
-        type: 'array',
-        items: {
-          type: 'object',
-          properties: {
-            alias: { type: 'string' },
-            matcher: { type: 'string' }
+  fixable: "code",
+  schema: [
+    {
+      type: "object",
+      properties: {
+        rootDir: { type: "string" },
+        relativeDepth: { type: "number" },
+        aliases: {
+          type: "array",
+          items: {
+            type: "object",
+            properties: {
+              alias: { type: "string" },
+              matcher: { type: "string" },
+            },
+            required: ["alias", "matcher"],
           },
-          required: ['alias', 'matcher']
-        }
-      }
-    }
-  }]
-};
+        },
+      },
+    },
+  ],
+});
 
-var RELATIVE_MATCHER = /^(?:\.{1,2}\/)+/;
+const RELATIVE_MATCHER = /^(?:\.{1,2}\/)+/;
 // eslint-disable-next-line no-undef
-var CWD = process.cwd();
+const CWD = process.cwd();
 
 /**
  * @param {string} matchedPath
  */
 function getDepthCount(matchedPath) {
-  return matchedPath.split('/').reduce(function (depth, segment) {
-    return segment === '..' ? depth + 1 : depth;
+  return matchedPath.split("/").reduce(function (depth, segment) {
+    return segment === ".." ? depth + 1 : depth;
   }, 0);
 }
 
@@ -56,61 +61,81 @@ function getDepthCount(matchedPath) {
  * @param {string} win32OrPosixPath
  */
 function normalizeToPosixPath(win32OrPosixPath) {
-  if (_path2.default.sep === '/') {
+  if (_path2.default.sep === "/") {
     // Paths are already posix-style paths, no need to fix
     return win32OrPosixPath;
   }
-  return win32OrPosixPath.split(_path2.default.sep).join('/');
+  return win32OrPosixPath.split(_path2.default.sep).join("/");
 }
 
 function create(context) {
-  var _ref = context.options[0] || {},
-      _ref$relativeDepth = _ref.relativeDepth,
-      relativeDepth = _ref$relativeDepth === undefined ? -1 : _ref$relativeDepth,
-      _ref$aliases = _ref.aliases,
-      _aliases = _ref$aliases === undefined ? [] : _ref$aliases,
-      _ref$rootDir = _ref.rootDir,
-      rootDir = _ref$rootDir === undefined ? CWD : _ref$rootDir;
+  const _ref = context.options[0] || {},
+    _ref$relativeDepth = _ref.relativeDepth,
+    relativeDepth = _ref$relativeDepth === undefined ? -1 : _ref$relativeDepth,
+    _ref$aliases = _ref.aliases,
+    _aliases = _ref$aliases === undefined ? [] : _ref$aliases,
+    _ref$rootDir = _ref.rootDir,
+    rootDir = _ref$rootDir === undefined ? CWD : _ref$rootDir;
 
-  var aliases = _aliases.map(function (item) {
+  const aliases = _aliases.map(function (item) {
     return Object.assign({}, item, {
-      matcher: new RegExp(item.matcher)
+      matcher: new RegExp(item.matcher),
     });
   });
 
   return {
     ImportDeclaration: function ImportDeclaration(node) {
       /** @type {string} */
-      var importValue = node.source.value;
-      var matches = importValue.match(RELATIVE_MATCHER);
+      const importValue = node.source.value;
+      const matches = importValue.match(RELATIVE_MATCHER);
 
       if (matches) {
-        var depth = getDepthCount(matches[0]);
+        const depth = getDepthCount(matches[0]);
 
         if (depth > relativeDepth) {
           context.report({
             node: node,
-            message: relativeDepth === -1 ? 'Import path mush be a path alias' : 'import statement must be an alias or no more than ' + relativeDepth + ' levels deep',
+            message:
+              relativeDepth === -1
+                ? "Import path mush be a path alias"
+                : "import statement must be an alias or no more than " +
+                  relativeDepth +
+                  " levels deep",
             fix: function fix(fixer) {
-              var parsedPath = _path2.default.parse(context.getFilename());
-              var importPath = _path2.default.relative(rootDir, _path2.default.resolve(parsedPath.dir, importValue));
+              const parsedPath = _path2.default.parse(context.getFilename());
+              const importPath = _path2.default.relative(
+                rootDir,
+                _path2.default.resolve(parsedPath.dir, importValue)
+              );
 
-              var _iteratorNormalCompletion = true;
-              var _didIteratorError = false;
-              var _iteratorError = undefined;
+              let _iteratorNormalCompletion = true;
+              let _didIteratorError = false;
+              let _iteratorError = undefined;
 
               try {
-                for (var _iterator = aliases[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-                  var item = _step.value;
+                for (
+                  var _iterator = aliases[Symbol.iterator](), _step;
+                  !(_iteratorNormalCompletion = (_step = _iterator.next())
+                    .done);
+                  _iteratorNormalCompletion = true
+                ) {
+                  const item = _step.value;
 
-                  var match = importPath.match(item.matcher);
+                  const match = importPath.match(item.matcher);
 
                   if (match) {
-                    var matchingString = match[match.length - 1];
-                    var index = match[0].indexOf(matchingString);
-                    var result = normalizeToPosixPath(importPath.slice(0, index) + item.alias + importPath.slice(index + matchingString.length));
+                    const matchingString = match[match.length - 1];
+                    const index = match[0].indexOf(matchingString);
+                    const result = normalizeToPosixPath(
+                      importPath.slice(0, index) +
+                        item.alias +
+                        importPath.slice(index + matchingString.length)
+                    );
 
-                    return fixer.replaceTextRange([node.source.range[0] + 1, node.source.range[1] - 1], result);
+                    return fixer.replaceTextRange(
+                      [node.source.range[0] + 1, node.source.range[1] - 1],
+                      result
+                    );
                   }
                 }
               } catch (err) {
@@ -127,10 +152,10 @@ function create(context) {
                   }
                 }
               }
-            }
+            },
           });
         }
       }
-    }
+    },
   };
 }

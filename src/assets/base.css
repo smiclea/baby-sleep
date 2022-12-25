@@ -1,20 +1,10 @@
-
-/*
-Dusty Pink: #d7b5b5
-Complementary color: #527b7b (a teal color)
-Light Blue: #add8e6
-Complementary color: #5b5e5b (a dark green color)
-Sage Green: #9db78d
-Complementary color: #625b93 (a deep purple color)
-*/
 /* semantic variables for this project */
 :root {
-  --primary-color: #f294b2;
-  --secondary-color: #527b7b;
-  --complementary-color: #1cdeca;
-  --color-background: #27241D;
-  --color-background-soft: #423d33;
-  --color-background-mute: #504a40;
+  --color-primary: #f294b2;
+  --color-secondary: #527b7b;
+  --color-complementary: #1cdeca;
+  --color-background: #1a1f38;
+  --color-background-soft: #2c314f;
 
   --color-border: rgba(84, 84, 84, 0.65);
   --color-border-hover: rgba(84, 84, 84, 0.48);
@@ -36,6 +26,7 @@ Complementary color: #625b93 (a deep purple color)
 
 body {
   min-height: 100vh;
+  min-width: 340px;
   color: var(--color-text);
   background: var(--color-background);
   transition: color 0.5s, background-color 0.5s;
