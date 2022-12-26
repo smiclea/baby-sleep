@@ -14,16 +14,16 @@ button {
   background: var(--color-primary);
   border: 1px solid var(--color-border);
   color: white;
-  width: 5rem;
-  height: 5rem;
+  width: 8rem;
+  height: 8rem;
   border-radius: 50%;
-  font-size: 14px;
+  font-size: 17px;
   box-shadow: 0 0 8px rgba(255, 255, 255, 0.2);
   text-align: center;
 }
 button.small {
-  width: 4rem;
-  height: 4rem;
+  width: 5rem;
+  height: 5rem;
 }
 button.complementary {
   background: var(--color-complementary);

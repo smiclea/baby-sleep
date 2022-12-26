@@ -5,6 +5,7 @@ import stopwatchSource from "@/sources/stopwatchSource";
 
 export const useStopwatchStore = defineStore("stopwatch", () => {
   const cycles = ref<StopwatchCycle[]>([]);
+  const milkFrom = ref<string | null>(null);
   const currentCycle = computed(() => {
     const lastCycle = cycles.value[0]?.items as StopwatchItem[] | undefined;
     if (!lastCycle || lastCycle[0].to) return;
@@ -15,6 +16,25 @@ export const useStopwatchStore = defineStore("stopwatch", () => {
     if (!lastCycleItem || lastCycleItem.to) return;
     return lastCycleItem;
   });
+  const milkColor = computed(() => {
+    if (!milkFrom.value) return "#1cdeca";
+    const diff = new Date().getTime() - new Date(milkFrom.value).getTime();
+
+    if (diff > 3 * 60 * 60 * 1000) {
+      return "var(--color-background-primary)";
+    }
+    if (diff > 2 * 60 * 60 * 1000) {
+      return "var(--color-background-warning)";
+    }
+    return "#1cdeca";
+  });
+  const loadMilkFrom = async () => {
+    milkFrom.value = await stopwatchSource.loadMilkFrom();
+  };
+  const saveMilkFrom = async (newMilkFrom: string) => {
+    milkFrom.value = newMilkFrom;
+    await stopwatchSource.saveMilkFrom(newMilkFrom);
+  };
   const loadCycles = async () => {
     cycles.value = await stopwatchSource.loadCycles();
   };
@@ -60,6 +80,10 @@ export const useStopwatchStore = defineStore("stopwatch", () => {
     cycles,
     currentCycle,
     currentCycleItem,
+    milkFrom,
+    milkColor,
+    loadMilkFrom,
+    saveMilkFrom,
     loadCycles,
     addCycleItem,
     stopCycle,
